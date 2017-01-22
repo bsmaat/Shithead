@@ -28,10 +28,11 @@ public class Deck extends Cards {
 		return hand;
 	}
 	
-	public List<Hand> dealHands(int numOfHands, int sizeOfHand) {
-		List<Hand> hands = new ArrayList<Hand>(numOfHands);
+	// deal ShitHand (face up and face down cards)
+	public List<ShitHand> dealHands(int numOfHands, int sizeOfHand) {
+		List<ShitHand> hands = new ArrayList<ShitHand>(numOfHands);
 		for (int i = 0; i < numOfHands; i++) {
-			hands.add(dealHand(sizeOfHand));
+			hands.add(new ShitHand(dealHand(sizeOfHand), dealHand(sizeOfHand)));
 		}
 		return hands;
 		

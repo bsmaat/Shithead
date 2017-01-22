@@ -6,8 +6,32 @@ public class Cards {
 
 	List<Card> cards;
 	
+	public Cards() {
+		cards = new ArrayList<Card>();
+	}
+	
 	public Cards(int numOfCards) {
 		cards = new ArrayList<Card>(numOfCards);
+	}
+	
+	public Cards(Cards cards) {
+		this.cards = new ArrayList<Card>(cards.size());
+	}
+	
+	public Cards copy(Cards cards) {
+		Cards copied = new Cards(cards.size());
+		for(int i = 0; i < cards.size(); i++) {
+			copied.addCard(cards.getCard(i));
+		}
+		return copied;
+	}
+	
+	public Card getCard(int n) {
+		return cards.get(n);
+	}
+	
+	public List<Card> getCards() {
+		return cards;
 	}
 	
 	public int size() {
@@ -21,6 +45,14 @@ public class Cards {
 	public void addCard(Card card) {
 		cards.add(card);
 	}	
+	
+	public void addCards(List<Card> c) {
+		cards.addAll(c);
+	}
+	
+	public void setCardById(int n, Card card) {
+		this.cards.set(n,  card);
+	}
 
 	public boolean removeCard(Card card) {
 		for (int i = 0; i < cards.size(); i++) {
@@ -30,6 +62,11 @@ public class Cards {
 			} 
 		}
 		return false;
+	}
+	
+	public boolean removeCardById(int n) {
+		cards.remove(n);
+		return true;
 	}
 
 	public void sortBySuit() {
@@ -62,7 +99,8 @@ public class Cards {
 	
 	public void printCards() {
 		for (int i = 0; i < cards.size(); i++) {
-			System.out.println(cards.get(i));
+			System.out.println(i + ": " + cards.get(i));
 		}
 	}
+
 }
