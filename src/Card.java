@@ -124,6 +124,23 @@ public class Card {
 	public void setValue(int value) {
 		this.value = value;
 	}
+	
+	public int compareTo(Card c) {
+		if (this.getValue() > c.getValue()) {
+			return 1;
+		} else if (this.value == c.getValue()) {
+			return 0;
+		} else 
+			return -1;
+	}
+	
+	public boolean isGreaterThanOrEqualTo(Card c) {
+		if (this.compareTo(c) == 1 || this.compareTo(c) == 0) 
+			return true;
+		else
+			return false;
+	}
+	
 
 	public boolean equals(Card c) {
 		if (this.rank == c.rank && this.value == c.value) 

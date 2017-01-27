@@ -40,8 +40,26 @@ public class Hand extends Cards {
 		this.removeCardById(id);
 	}
 	
+	public void dropCard(Card c) {
+		pile.addCard(c);
+		this.removeCard(c);
+	}
+	
 	public void pickUpPile() {
 		this.addCards(pile.getCards());
+		pile.clear();
+	}
+	
+	public boolean isPlayable() {
+		//check it's a clear pile
+		if (pile.isEmpty()) {
+			return true;
+		}
+		//else check for card greater than card on table
+		else if (this.getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop()) != null) {
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 public class Cards {
@@ -26,6 +28,10 @@ public class Cards {
 		return copied;
 	}
 	
+	public void clear() {
+		cards.clear();
+	}
+	
 	public Card getCard(int n) {
 		return cards.get(n);
 	}
@@ -34,6 +40,29 @@ public class Cards {
 		return cards;
 	}
 	
+	public Card getMaxValueCard() {
+		Card maxCard = null;
+		for(Card c : cards) {
+			if (maxCard == null) {
+				maxCard = c;
+			} else if (maxCard.getValue() < c.getValue()) {
+				maxCard = c;
+			}
+		}
+		return maxCard;
+	}
+	
+	public Card getMinValueCard() {
+		Card minCard = null;
+		for (Card c : cards) {
+			if (minCard == null) {
+				minCard = c;
+			} else if (minCard.getValue() > c.getValue()) {
+				minCard = c;
+			}
+		}
+		return minCard;
+	}
 	public int size() {
 		return cards.size();
 	}
@@ -65,41 +94,118 @@ public class Cards {
 	}
 	
 	public boolean removeCardById(int n) {
-		cards.remove(n);
-		return true;
+		if (!isEmpty()) {
+			cards.remove(n);
+			return true;
+		} else
+			return false;
 	}
 
 	public void sortBySuit() {
 		
 	}
 	
-	public void sortByValue() {
-		
+	public boolean sortByValue(boolean ascending) {
+		if (!isEmpty()) {
+			if (!ascending) {
+				Collections.sort(cards, new Comparator<Card>() {
+
+					@Override
+					public int compare(Card c1, Card c2) {
+						int val = compare(c2.getValue(), c1.getValue());
+						return val;
+					}
+
+					public int compare(int a, int b) {
+						return a < b ? -1
+								: a > b ? 1
+										:0;
+					}
+				});
+				return true;
+			} else 	{
+				Collections.sort(cards, new Comparator<Card>() {
+
+					@Override
+					public int compare(Card c1, Card c2) {
+						int val = compare(c1.getValue(), c2.getValue());
+						return val;
+					}
+
+					public int compare(int a, int b) {
+						return a < b ? -1
+								: a > b ? 1
+										:0;
+					}
+				});
+				return true;
+			}
+		} else
+			return false;
+			
 	}
 
 	public Card removeCardFromBottom() {
-		Card c = new Card(cards.get(0));
-		cards.remove(0);
-		return c;
+		if (!isEmpty()) {
+			Card c = new Card(cards.get(0));
+			cards.remove(0);
+			return c;
+		} else
+			return null;
 	}
 	
 	public Card removeCardFromTop() {
-		Card c = new Card(cards.get(cards.size()-1));
-		cards.remove(cards.size()-1);
-		return c;
+		if (!isEmpty()) {
+			Card c = new Card(cards.get(cards.size()-1));
+			cards.remove(cards.size()-1);
+			return c;
+		} else
+			return null;
+		
 	}
 
 	public Card peakCardFromBottom() {
-		return new Card(cards.get(0));
+		if (!isEmpty()) 
+			return new Card(cards.get(0));
+		else
+			return null;
 	}
 	
 	public Card peakCardFromTop() {
-		return new Card(cards.get(cards.size()-1));
+		if (!isEmpty()) 
+			return new Card(cards.get(cards.size()-1));
+		else
+			return null;
+	}
+	
+	public Card getSmallestCardGreaterThanOrEqualTo(Card c) {
+		if (!isEmpty()) {
+			this.sortByValue(true);
+			for (int i = 0; i < cards.size(); i++) {
+				if (this.cards.get(i).isGreaterThanOrEqualTo(c)) {
+					return this.cards.get(i);
+				}
+			}
+		} 
+		return null;
 	}
 	
 	public void printCards() {
-		for (int i = 0; i < cards.size(); i++) {
-			System.out.println(i + ": " + cards.get(i));
+		if (!isEmpty()) {
+			System.out.print("\t");
+			for (int i = 0; i < cards.size()-1; i++) {
+				System.out.print(i + ": " + cards.get(i) + ", ");
+			}
+			System.out.println(cards.size()-1 + ": " + cards.get(cards.size()-1));
+		} else
+			System.out.println("Empty hand");
+	}
+	
+	public boolean isEmpty() {
+		if (cards.size() == 0) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
