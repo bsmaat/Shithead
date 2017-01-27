@@ -1,7 +1,19 @@
-
+/**
+ * 
+ * @author billy
+ * The card class
+ * 
+ */
 public class Card {
 
+	/** 
+	 * Rank of card (0..3)
+	 */
 	int rank;
+	
+	/**
+	 * Value of card (1..13)
+	 */
 	int value;
 	
 	public static final int ACE = 1;
@@ -18,24 +30,53 @@ public class Card {
 	public static final int QUEEN = 12;
 	public static final int KING = 13;
 	
+	/**
+	 * Card rank
+	 */
 	public static final int HEARTS = 1;
+	/**
+	 * Card rank
+	 */
 	public static final int DIAMONDS = 2;
+	/**
+	 * Card rank
+	 */
 	public static final int SPADES = 3;
+	/**
+	 * Card rank
+	 */
 	public static final int CLUBS = 4;
 
-	
+	/**
+	 * Default constructor
+	 */
 	public Card() {
 	}
 	
+	/**
+	 * Make new card given card as parameter
+	 * @param c
+	 */
 	public Card(Card c) {
 		this.rank = c.rank;
 		this.value = c.value;
 	}
+	
+	/**
+	 * Make new card given rank and value as parameters
+	 * @param rank
+	 * @param value
+	 */
 	public Card(int rank, int value) {
 		this.rank = rank;
 		this.value = value;
 	}
 	
+	/**
+	 * Copy card c 
+	 * @param c
+	 * @return
+	 */
 	public Card copy(Card c) {
 		Card newCard = new Card();
 		newCard.rank = c.rank;
@@ -43,6 +84,9 @@ public class Card {
 		return newCard;
 	}
 	
+	/**
+	 * Return string representation of card
+	 */
 	public String toString() {
 		String str1, str2;
 		switch(this.value) {
@@ -109,22 +153,44 @@ public class Card {
 		return (str1 + " of " + str2);
 	}
 	
+	/**#
+	 * Get card rank
+	 * @return
+	 */
 	public int getRank() {
 		return rank;
 	}
 	
+	/**
+	 * Get card value
+	 * @return
+	 */
 	public int getValue() {
 		return value;
 	}
 	
+	/**
+	 * Set card rank
+	 * @param rank
+	 */
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
 	
+	/**
+	 * Set card value
+	 * @param value
+	 */
 	public void setValue(int value) {
 		this.value = value;
 	}
 	
+	/**
+	 * Compare card to card c by value. If this card is: greater than c, return 1; equal to c, return 0;
+	 *  less than c, return -1;.
+	 * @param c
+	 * @return
+	 */
 	public int compareTo(Card c) {
 		if (this.getValue() > c.getValue()) {
 			return 1;
@@ -134,6 +200,11 @@ public class Card {
 			return -1;
 	}
 	
+	/**
+	 * Compare this card to card c by value
+	 * @param c
+	 * @return
+	 */
 	public boolean isGreaterThanOrEqualTo(Card c) {
 		if (this.compareTo(c) == 1 || this.compareTo(c) == 0) 
 			return true;
@@ -141,12 +212,31 @@ public class Card {
 			return false;
 	}
 	
-
+	public boolean isLessThanOrEqualTo(Card c) {
+		if (this.compareTo(c) == -1 || this.compareTo(c) == 0) 
+			return true;
+		else
+			return false;
+	}
+	
+	/**
+	 * Check if two cards are equal by rank and value
+	 * @param c
+	 * @return
+	 */
 	public boolean equals(Card c) {
 		if (this.rank == c.rank && this.value == c.value) 
 			return true;
 		else
 			return false;
+	}
+	
+	public boolean isMagicCard() {
+		if (this.getValue() == MagicCard.SEVEN.getValue()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 

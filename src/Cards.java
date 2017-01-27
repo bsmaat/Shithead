@@ -190,15 +190,28 @@ public class Cards {
 		return null;
 	}
 	
+	public Card getSmallestCardLessThanOrEqualTo(Card c) {
+		if (!isEmpty()) {
+			this.sortByValue(true);
+			for (int i = 0; i < cards.size(); i++) {
+				if (this.cards.get(i).isLessThanOrEqualTo(c)) {
+					return this.getCard(i);
+				}
+			}
+		}
+		return null;
+	}
+	
 	public void printCards() {
 		if (!isEmpty()) {
-			System.out.print("\t");
-			for (int i = 0; i < cards.size()-1; i++) {
-				System.out.print(i + ": " + cards.get(i) + ", ");
+			for (int i = 0; i < cards.size(); i++) {
+				System.out.print("\t");
+				System.out.println(i + ": " + cards.get(i) + ", ");
 			}
-			System.out.println(cards.size()-1 + ": " + cards.get(cards.size()-1));
+			//System.out.println(cards.size()-1 + ": " + cards.get(cards.size()-1));
 		} else
 			System.out.println("Empty hand");
+		System.out.println();
 	}
 	
 	public boolean isEmpty() {

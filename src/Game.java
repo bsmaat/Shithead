@@ -48,7 +48,6 @@ public class Game {
 		//Card c = new Card(deck.peakCardFromTop());
 		pile.addCard(new Card(deck.removeCardFromTop()));
 		
-		//String s = new String("\033[43m");
 
 		while(true) {
 			System.out.println("Pile: ");
@@ -70,12 +69,20 @@ public class Game {
 				
 				// if the hand is playable, allow player to select next card
 				if (hands.get(i).getFaceUp().isPlayable()) {
-					System.out.print("Player " + i + ", drop a card: ");
-					input = scanner.nextLine();
-					id = Integer.parseInt(input);
-					hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)
-					Card pickUpCard = new Card(deck.removeCardFromTop()); // pick up card from top of deck
-					hands.get(i).getFaceUp().addCard(pickUpCard); // pick up card
+					boolean playable = false;
+					while (!playable) {
+						System.out.print("Player " + i + ", drop a card: ");
+						input = scanner.nextLine();
+						id = Integer.parseInt(input);
+						if (hands.get(i).getFaceUp().isCardPlayable(id)) {
+							playable = true;
+							hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)
+							Card pickUpCard = new Card(deck.removeCardFromTop()); // pick up card from top of deck
+							hands.get(i).getFaceUp().addCard(pickUpCard); // pick up card
+						} else {
+							System.out.println(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
+						}
+					}
 				} else {
 					System.out.println("Not playable, player " + i + " picks up");
 					hands.get(i).getFaceUp().pickUpPile();
@@ -85,11 +92,15 @@ public class Game {
 			//computer plays
 			if (COMPUTER_ON) { 
 				System.out.println("Computer player");
-				hands.get(COMPUTER_INDEX).getFaceUp().printCards();
+				//hands.get(COMPUTER_INDEX).getFaceUp().printCards();
 				if(hands.get(COMPUTER_INDEX).getFaceUp().isPlayable()) {
 					Card c;
 					if (!pile.isEmpty()) {
-						c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
+						if (pile.peakCardFromTop().isMagicCard()) {
+							c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
+						} else {
+							c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
+						}
 						if (c != null) {
 							hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
 							Card pickUpCard = new Card(deck.removeCardFromTop());
@@ -100,13 +111,16 @@ public class Game {
 						}
 					} else {
 						// if it's empty just drop the lowest card
+						//System.out.println("Computer dropping lowest card");
 						c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
 						hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
 						Card pickUpCard = new Card(deck.removeCardFromTop());
 						hands.get(COMPUTER_INDEX).getFaceUp().addCard(pickUpCard);
 					}
 					System.out.println("Computer played " + c);
-					
+				} else {
+					System.out.println("Computer can't playing, picking up");
+					hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
 				}
 			}
 			
