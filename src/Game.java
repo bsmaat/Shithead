@@ -65,20 +65,26 @@ public class Game {
 				hands.get(COMPUTER_INDEX).getFaceUp().printCards();
 			}
 			
+			
+			//players play
 			for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 				
 				// if the hand is playable, allow player to select next card
-				if (hands.get(i).getFaceUp().isPlayable()) {
+				//if (hands.get(i).getFaceUp().isPlayable()) {
+				if (isHandPlayable(hands.get(i).getFaceUp())) {
 					boolean playable = false;
 					while (!playable) {
 						System.out.print("Player " + i + ", drop a card: ");
 						input = scanner.nextLine();
 						id = Integer.parseInt(input);
-						if (hands.get(i).getFaceUp().isCardPlayable(id)) {
+						Card cardToPlay = hands.get(i).getFaceUp().getCard(id);
+						//if (hands.get(i).getFaceUp().isCardPlayable(id)) {
+						if (isCardPlayable(cardToPlay)) {
 							playable = true;
 							hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)
-							Card pickUpCard = new Card(deck.removeCardFromTop()); // pick up card from top of deck
-							hands.get(i).getFaceUp().addCard(pickUpCard); // pick up card
+							//Card pickUpCard = new Card(deck.removeCardFromTop()); // pick up card from top of deck
+							//hands.get(i).getFaceUp().addCard(pickUpCard); // pick up card
+							pickUpCard(hands.get(i).getFaceUp());
 						} else {
 							System.out.println(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
 						}
@@ -92,11 +98,11 @@ public class Game {
 			//computer plays
 			if (COMPUTER_ON) { 
 				System.out.println("Computer player");
-				//hands.get(COMPUTER_INDEX).getFaceUp().printCards();
-				if(hands.get(COMPUTER_INDEX).getFaceUp().isPlayable()) {
+				//if(hands.get(COMPUTER_INDEX).getFaceUp().isPlayable()) {
+				if (isHandPlayable(hands.get(COMPUTER_INDEX).getFaceUp())) {
 					Card c;
 					if (!pile.isEmpty()) {
-						if (pile.peakCardFromTop().isMagicCard()) {
+						if (isMagicCard(pile.peakCardFromTop()) == 7) {
 							c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
 						} else {
 							c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
@@ -111,11 +117,9 @@ public class Game {
 						}
 					} else {
 						// if it's empty just drop the lowest card
-						//System.out.println("Computer dropping lowest card");
 						c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
 						hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
-						Card pickUpCard = new Card(deck.removeCardFromTop());
-						hands.get(COMPUTER_INDEX).getFaceUp().addCard(pickUpCard);
+						pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 					}
 					System.out.println("Computer played " + c);
 				} else {
@@ -124,17 +128,64 @@ public class Game {
 				}
 			}
 			
+			System.out.println("-------------------------------------------------------------------");
+			
 						
 		}
-		
 		
 		//scanner.close();
 		
 	}
 	
-	public boolean checkIfCanDrop(Hand hand) {
-		boolean result = false;
-		return result;
+	public void pickUpCard(Hand h) {
+		while (h.size() < NUM_OF_CARDS) {
+			if (!deck.isEmpty()) {
+				Card pickUpCard = new Card(deck.removeCardFromTop());
+				h.addCard(pickUpCard);
+			} else
+				break; // if deck is empty break out of loop
+		} 
 	}
 	
+	public boolean isCardPlayable(Card c) {
+		if (pile.isEmpty()) {
+			return true;
+		} else {
+			if (isMagicCard(pile.peakCardFromTop()) == 7) {
+				System.out.println("Magic card! Must go lower");
+				if (c.isLessThanOrEqualTo(pile.peakCardFromTop())) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if (isMagicCard(c) == 2 || isMagicCard(c) == 10) { 
+				// magic card 2 and 10 are always playable
+				return true;
+			}
+			else if (!c.isGreaterThanOrEqualTo(pile.peakCardFromTop())) {
+				return false;
+			} else
+				return true;
+		}
+	}
+	
+	public boolean isHandPlayable(Hand h) {
+		for (int i = 0; i < h.size(); i++) {
+			if (isCardPlayable(h.getCard(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int isMagicCard(Card c) {
+		if (c.getValue() == MagicCard.TWO.getValue()) {
+			return 2;
+		} else if (c.getValue() == MagicCard.SEVEN.getValue()) {
+			return 7;
+		} else if (c.getValue() == MagicCard.TEN.getValue()){
+			return 10;
+		} else
+			return 0;
+	}
 }

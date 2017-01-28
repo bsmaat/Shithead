@@ -231,13 +231,6 @@ public class Card {
 			return false;
 	}
 	
-	public boolean isMagicCard() {
-		if (this.getValue() == MagicCard.SEVEN.getValue()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 
 }

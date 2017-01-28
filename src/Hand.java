@@ -49,7 +49,7 @@ public class Hand extends Cards {
 		this.addCards(pile.getCards());
 		pile.clear();
 	}
-	
+	/*
 	public boolean isCardPlayable(int id) {
 		if (pile.isEmpty()) {
 			return true;
@@ -70,7 +70,9 @@ public class Hand extends Cards {
 				return true;
 		}
 	}
+	*/
 	
+	/*
 	public boolean isPlayable() {
 		for (int i = 0; i < this.size(); i++) {
 			if (this.isCardPlayable(i)) {
@@ -79,6 +81,7 @@ public class Hand extends Cards {
 		}
 		return false;
 	}
+	*/
 	
 	/*
 	public boolean isCardPlayable(int id) {
