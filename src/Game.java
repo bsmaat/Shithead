@@ -8,9 +8,11 @@ public class Game {
 	static final int NUM_OF_PLAYERS = 1;
 	static int COMPUTER_INDEX = 0;
 	static final boolean COMPUTER_ON = true;
-
+	static ShitHeadGUI gui;
 	
 	public static void main(String[] args) {
+		gui = new ShitHeadGUI();
+		
 		Game game = new Game();
 		game.startGame();
 	}
@@ -53,11 +55,15 @@ public class Game {
 			System.out.println("Pile: ");
 			pile.printCards();
 			
+			
 			for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 				System.out.println("Player " + i + " cards: ");
 				hands.get(i).faceUp.sortByValue(true); // sort by ascending value
 				hands.get(i).faceUp.printCards();
 			}
+			
+			gui.displayCards(hands, pile);
+
 			
 			if(COMPUTER_ON) {
 				System.out.println("Computer cards: ");
@@ -70,20 +76,25 @@ public class Game {
 			for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 				
 				// if the hand is playable, allow player to select next card
-				//if (hands.get(i).getFaceUp().isPlayable()) {
 				if (isHandPlayable(hands.get(i).getFaceUp())) {
-					boolean playable = false;
-					while (!playable) {
+					boolean playing = true;
+					while (playing) {
+						gui.displayCards(hands,  pile);
 						System.out.print("Player " + i + ", drop a card: ");
-						input = scanner.nextLine();
-						id = Integer.parseInt(input);
+						id = gui.getGUIInput();
+						System.out.println(id);
+						// need to wait for click instead here
+						//input = scanner.nextLine(); 
+						//id = Integer.parseInt(input);
 						Card cardToPlay = hands.get(i).getFaceUp().getCard(id);
-						//if (hands.get(i).getFaceUp().isCardPlayable(id)) {
 						if (isCardPlayable(cardToPlay)) {
-							playable = true;
-							hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)
-							//Card pickUpCard = new Card(deck.removeCardFromTop()); // pick up card from top of deck
-							//hands.get(i).getFaceUp().addCard(pickUpCard); // pick up card
+							hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)							
+							//if (isMagicCard(hands.get(i).getFaceUp().getCard(id)) == 10) { // if 10 clear pile
+							if (isMagicCard(cardToPlay) == 10) {
+								pile.clear();
+								continue;
+							}
+							playing = false;
 							pickUpCard(hands.get(i).getFaceUp());
 						} else {
 							System.out.println(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
@@ -98,30 +109,38 @@ public class Game {
 			//computer plays
 			if (COMPUTER_ON) { 
 				System.out.println("Computer player");
-				//if(hands.get(COMPUTER_INDEX).getFaceUp().isPlayable()) {
 				if (isHandPlayable(hands.get(COMPUTER_INDEX).getFaceUp())) {
-					Card c;
-					if (!pile.isEmpty()) {
-						if (isMagicCard(pile.peakCardFromTop()) == 7) {
+					boolean playing = true;
+					while(playing) {
+						Card c;
+						if (!pile.isEmpty()) {
+							if (isMagicCard(pile.peakCardFromTop()) == 7) {
+								c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
+							} else {
+								c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
+							}
+							if (c != null) {
+								hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
+								Card pickUpCard = new Card(deck.removeCardFromTop());
+								pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
+								if (isMagicCard(c) == 10) {
+									System.out.println("Computer cleared the pile with " + c);
+									pile.clear();
+									continue;
+								}
+							} else {
+								System.out.println("Computer does not have a higher card. Picking up...");
+								hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
+							}
+						} else {
+							// if it's empty just drop the lowest card
 							c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
-						} else {
-							c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
-						}
-						if (c != null) {
 							hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
-							Card pickUpCard = new Card(deck.removeCardFromTop());
-							hands.get(COMPUTER_INDEX).getFaceUp().addCard(pickUpCard);
-						} else {
-							System.out.println("Computer does not have a higher card. Picking up...");
-							hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
+							pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 						}
-					} else {
-						// if it's empty just drop the lowest card
-						c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
-						hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
-						pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
+						System.out.println("Computer played " + c);
+						playing = false;
 					}
-					System.out.println("Computer played " + c);
 				} else {
 					System.out.println("Computer can't playing, picking up");
 					hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
@@ -140,6 +159,7 @@ public class Game {
 	public void pickUpCard(Hand h) {
 		while (h.size() < NUM_OF_CARDS) {
 			if (!deck.isEmpty()) {
+				System.out.println("HI");
 				Card pickUpCard = new Card(deck.removeCardFromTop());
 				h.addCard(pickUpCard);
 			} else
@@ -151,16 +171,17 @@ public class Game {
 		if (pile.isEmpty()) {
 			return true;
 		} else {
-			if (isMagicCard(pile.peakCardFromTop()) == 7) {
+			if (isMagicCard(c) == 2 || isMagicCard(c) == 10) { 
+				// magic card 2 and 10 are always playable
+				return true;
+			}
+			else if (isMagicCard(pile.peakCardFromTop()) == 7) {
 				System.out.println("Magic card! Must go lower");
 				if (c.isLessThanOrEqualTo(pile.peakCardFromTop())) {
 					return true;
 				} else {
 					return false;
 				}
-			} else if (isMagicCard(c) == 2 || isMagicCard(c) == 10) { 
-				// magic card 2 and 10 are always playable
-				return true;
 			}
 			else if (!c.isGreaterThanOrEqualTo(pile.peakCardFromTop())) {
 				return false;

@@ -10,7 +10,7 @@ public class Deck extends Cards {
 
 	public void initialiseDeck() {
 		for(int j = 1; j < 5; j++) {
-			for(int k = 1; k < 14; k++) {
+			for(int k = 2; k < 15; k++) { // 2 to 14 since ace is high (A = 14)
 				cards.add(new Card(j, k));
 			}
 		}
