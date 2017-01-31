@@ -121,13 +121,13 @@ public class Card {
 				str1 = "10";
 				break;
 			case(Card.JACK):
-				str1 = "J";
+				str1 = "Jack";
 				break;
 			case(Card.QUEEN):
-				str1 = "Q";
+				str1 = "Queen";
 				break;
 			case(Card.KING):
-				str1 = "K";
+				str1 = "King";
 				break;	
 			default:
 				str1 = "Error1";

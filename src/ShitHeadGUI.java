@@ -1,16 +1,19 @@
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
 
-public class ShitHeadGUI extends JPanel implements ActionListener {
+public class ShitHeadGUI extends JPanel implements MouseListener {
 
 	public String[] s = new String[] {"Ace of Hearts", "2 of Diamonds", "3 of Clubs"};
 	
@@ -20,8 +23,9 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 	JPanel pilePanel = new JPanel();
 	JFrame frame = new JFrame("Shithead");
 	
-	List<List<JButton> > lstBtnHand = new ArrayList<List<JButton> >();
-	
+	//List<List<JButton> > lstBtnHand = new ArrayList<List<JButton> >();
+	List<List<CardLabel> > lstBtnHand = new ArrayList<List<CardLabel> >();
+
 	boolean waitingForClick = true;
 	int btnID = -1;
 	public ShitHeadGUI() {
@@ -29,14 +33,15 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 		this.setLayout(new GridLayout(3, 1));
 		this.setPreferredSize(new Dimension(800,300));
 		
-		pilePanel.setLayout(new GridLayout(1,0));
+		pilePanel.setLayout(new FlowLayout());
 
 		
 		for (int i = 0; i < Game.NUM_OF_PLAYERS +1; i++) {
-			lstBtnHand.add(new ArrayList<JButton>());
+			lstBtnHand.add(new ArrayList<CardLabel>());
 			hands.add(new JPanel());
 			this.add(hands.get(i));
-			hands.get(i).setLayout(new GridLayout(1,0));
+			//hands.get(i).setLayout(new GridLayout(1,0));
+			hands.get(i).setLayout(new FlowLayout());
 		}
 		
 		frame.setVisible(true);
@@ -49,11 +54,13 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 		hands.get(id).removeAll();
 		
 		
-		List<JButton> btnCard = new ArrayList<JButton>();
+		//List<JButton> btnCard = new ArrayList<JButton>();
+		List<CardLabel> btnCard = new ArrayList<CardLabel>();
 		
 		for (int i = 0; i < h.size(); i++) {
-			JButton btn = new JButton("<html><center>" + h.getCard(i).toString().replaceAll(" ", "<br>") + "</center></html>");
-			btn.addActionListener(this);
+			//JButton btn = new JButton("<html><center>" + h.getCard(i).toString().replaceAll(" ", "<br>") + "</center></html>");
+			CardLabel btn = new CardLabel(h.getCard(i));
+			btn.addMouseListener(this);
 			btnCard.add(btn);
 			hands.get(id).add(btnCard.get(i));
 		}	
@@ -71,7 +78,7 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 		if (pile.isEmpty()) {
 			pilePanel.add(new JButton("Empty pile"));
 		} else 
-			pilePanel.add(new JButton(pile.peakCardFromTop().toString()));
+			pilePanel.add(new CardLabel(pile.peakCardFromTop()));
 		
 		this.add(pilePanel);
 
@@ -79,6 +86,7 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 		frame.pack();
 	}
 
+	/*
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		waitingForClick = false;
@@ -93,6 +101,7 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 			}
 		}
 	}
+	*/
 	
 	public int getGUIInput() {
 		while(waitingForClick) {
@@ -104,5 +113,45 @@ public class ShitHeadGUI extends JPanel implements ActionListener {
 		}
 		waitingForClick = true;
 		return btnID;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		waitingForClick = false;
+		System.out.println("HERE");
+		for (int i = 0; i < lstBtnHand.size(); i++) {
+			List<CardLabel> btnHand = lstBtnHand.get(i);
+			for (int j = 0; j < btnHand.size(); j++) {
+				if (e.getSource() == btnHand.get(j)) {
+					btnID = j;
+					//System.out.println(btnHand.get(j).getText());
+				}
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
