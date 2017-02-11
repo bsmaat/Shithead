@@ -24,6 +24,18 @@ public class Game {
 		pile = new Pile();
 	}
 	
+	public static void display(String s) {
+		System.out.println(s);;
+	}
+	
+	public static void display(int s) {
+		System.out.println(Integer.toString(s));
+	}
+	
+	public static void display() {
+		System.out.println();
+	}
+	
 	public void startGame() {
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
@@ -52,21 +64,21 @@ public class Game {
 		
 
 		while(true) {
-			System.out.println("Pile: ");
+			display("Pile: ");
 			pile.printCards();
 			
 			
 			for (int i = 0; i < NUM_OF_PLAYERS; i++) {
-				System.out.println("Player " + i + " cards: ");
+				display("Player " + i + " cards: ");
 				hands.get(i).faceUp.sortByValue(true); // sort by ascending value
 				hands.get(i).faceUp.printCards();
 			}
 			
-			gui.displayCards(hands, pile);
+			//gui.displayCards(hands, pile);
 
 			
 			if(COMPUTER_ON) {
-				System.out.println("Computer cards: ");
+				display("Computer cards: ");
 				hands.get(COMPUTER_INDEX).getFaceUp().sortByValue(true); // sort by ascending value
 				hands.get(COMPUTER_INDEX).getFaceUp().printCards();
 			}
@@ -82,7 +94,7 @@ public class Game {
 						gui.displayCards(hands,  pile);
 						System.out.print("Player " + i + ", drop a card: ");
 						id = gui.getGUIInput();
-						System.out.println(id);
+						display(id);
 						// need to wait for click instead here
 						//input = scanner.nextLine(); 
 						//id = Integer.parseInt(input);
@@ -97,18 +109,18 @@ public class Game {
 							playing = false;
 							pickUpCard(hands.get(i).getFaceUp());
 						} else {
-							System.out.println(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
+							display(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
 						}
 					}
 				} else {
-					System.out.println("Not playable, player " + i + " picks up");
+					display("Not playable, player " + i + " picks up");
 					hands.get(i).getFaceUp().pickUpPile();
 				}
 			}
 			
 			//computer plays
 			if (COMPUTER_ON) { 
-				System.out.println("Computer player");
+				display("Computer player");
 				if (isHandPlayable(hands.get(COMPUTER_INDEX).getFaceUp())) {
 					boolean playing = true;
 					while(playing) {
@@ -124,12 +136,12 @@ public class Game {
 								Card pickUpCard = new Card(deck.removeCardFromTop());
 								pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 								if (isMagicCard(c) == 10) {
-									System.out.println("Computer cleared the pile with " + c);
+									display("Computer cleared the pile with " + c);
 									pile.clear();
 									continue;
 								}
 							} else {
-								System.out.println("Computer does not have a higher card. Picking up...");
+								display("Computer does not have a higher card. Picking up...");
 								hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
 							}
 						} else {
@@ -138,16 +150,16 @@ public class Game {
 							hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
 							pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 						}
-						System.out.println("Computer played " + c);
+						display("Computer played " + c);
 						playing = false;
 					}
 				} else {
-					System.out.println("Computer can't playing, picking up");
+					display("Computer can't playing, picking up");
 					hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
 				}
 			}
 			
-			System.out.println("-------------------------------------------------------------------");
+			display("-------------------------------------------------------------------");
 			
 						
 		}
@@ -159,7 +171,6 @@ public class Game {
 	public void pickUpCard(Hand h) {
 		while (h.size() < NUM_OF_CARDS) {
 			if (!deck.isEmpty()) {
-				System.out.println("HI");
 				Card pickUpCard = new Card(deck.removeCardFromTop());
 				h.addCard(pickUpCard);
 			} else
@@ -176,7 +187,7 @@ public class Game {
 				return true;
 			}
 			else if (isMagicCard(pile.peakCardFromTop()) == 7) {
-				System.out.println("Magic card! Must go lower");
+				display("Magic card! Must go lower");
 				if (c.isLessThanOrEqualTo(pile.peakCardFromTop())) {
 					return true;
 				} else {

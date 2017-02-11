@@ -205,13 +205,17 @@ public class Cards {
 	public void printCards() {
 		if (!isEmpty()) {
 			for (int i = 0; i < cards.size(); i++) {
-				System.out.print("\t");
-				System.out.println(i + ": " + cards.get(i) + ", ");
+				String s = "\t" + i + ": " + cards.get(i) + ", ";
+				Game.display(s);
+				//System.out.print("\t");
+				//System.out.println(i + ": " + cards.get(i) + ", ");
 			}
 			//System.out.println(cards.size()-1 + ": " + cards.get(cards.size()-1));
 		} else
-			System.out.println("Empty hand");
-		System.out.println();
+			//System.out.println("Empty hand");
+			Game.display("Empty hand");
+		Game.display();
+		//System.out.println();
 	}
 	
 	public boolean isEmpty() {

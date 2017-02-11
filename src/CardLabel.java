@@ -16,7 +16,6 @@ public class CardLabel  extends JLabel {
 		
 		BufferedImage img = null;
 		try {
-			System.out.println("NAME: "+ "/media/billy/HOME/workspace/Shithead/src/cards/" + toName(c));
 			img = ImageIO.read(new File("/media/billy/HOME/workspace/Shithead/src/cards/" + toName(c)));
 		} catch(Exception e) {
 			System.out.println(e);
