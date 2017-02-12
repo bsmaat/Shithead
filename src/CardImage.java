@@ -32,7 +32,9 @@ public class CardImage {
 	
 	public Image setImage(Card c) {
 		try {
-			img = ImageIO.read(new File("src/cards/" + toName(c)));
+			//img = ImageIO.read(new File("src/cards/" + toName(c)));
+			img = CardPng.getCardImg(c);
+			
 		} catch(Exception e) {
 			System.out.println(e);
 		}

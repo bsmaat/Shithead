@@ -15,6 +15,8 @@ public class HandPanel extends CardPanel {
 
 	boolean max_size = false;
 	
+	double overlap_width = -1;
+	
 	//List<CardImage> cardImage;
 	
 	public HandPanel() {
@@ -52,6 +54,13 @@ public class HandPanel extends CardPanel {
     	return super.getPreferredSize();
     }*/
     
+	public boolean isMaxSize() {
+		return max_size;
+	}
+	
+	public double getOverlapWidth() {
+		return overlap_width;
+	}
     
     //paint the cards
 	public void paintComponent(Graphics g) {
@@ -68,13 +77,13 @@ public class HandPanel extends CardPanel {
 			}
 		} else {
 			// here we have overlapping
-			double width = (this.getParent().getSize().getWidth())/cardImage.size();
+			overlap_width = (this.getParent().getSize().getWidth())/cardImage.size();
 			//double gap_width = (this.getParent().getSize().getWidth()-cardImage.size()*CardImage.WIDTH)/(cardImage.size()-1);
 			
 			for (int i = 0; i < cardImage.size(); i++) {
 				Image img = cardImage.get(i).getImage();
 				//g.drawImage(img, (int) (width/2 + i*width - CardImage.WIDTH/2), HandPanel.SPACE_Y, null);
-				g.drawImage(img,  (int)(i*width),  HandPanel.SPACE_Y,  null);
+				g.drawImage(img,  (int)(i*overlap_width),  HandPanel.SPACE_Y,  null);
 			}
 		}
 		

@@ -44,6 +44,7 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	}
 	
 	public ShitHeadGUI() {
+		CardPng.init();
 		init();
 
 	}
@@ -65,14 +66,9 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 			//this.add(hands.get(i));
 		}
 		
-		// only focus on two players now
-		//this.add(Box.createRigidArea(new Dimension(0,10)));
 		this.add(hands.get(1)); // add computer
-		//this.add(Box.createRigidArea(new Dimension(0,10)));
 		this.add(pilePanel);
-		//this.add(Box.createRigidArea(new Dimension(0,10)));
 		this.add(hands.get(0)); // add player
-		//this.add(Box.createRigidArea(new Dimension(0,10)));
 		
 		
 		frame.setMinimumSize(this.getSize());
@@ -150,7 +146,7 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		for (int i = 0; i < hands.size(); i++) {
 			if (e.getSource() == hands.get(i)) {
 				System.out.println("Hand " + i + " clicked on");
-				int id = getCardClickedID(e);
+				int id = getCardClickedID(hands.get(i), e);
 				System.out.println(id);
 				btnID = id;
 				waitingForClick = false;
@@ -158,26 +154,21 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 			}
 		}
 		
-		/*
-		for (int i = 0; i < lstBtnHand.size(); i++) {
-			List<CardImage> btnHand = lstBtnHand.get(i);
-			for (int j = 0; j < btnHand.size(); j++) {
-				if (e.getSource() == btnHand.get(j)) {
-					btnID = j;
-					//System.out.println(btnHand.get(j).getText());
-				}
-			}
-		}
-		*/
 	}
+	
 
-	public int getCardClickedID(MouseEvent e) {
+	public int getCardClickedID(HandPanel handPanel, MouseEvent e) {
 		Point p = e.getPoint();
 		System.out.println(p.getX() + ", " + p.getY());
 		
-		int xmod = (int) p.getX() / (CardImage.WIDTH + HandPanel.SPACE_X);
+		int id = -1;
+		if(!handPanel.isMaxSize()) {
+			id = (int) p.getX() / (CardImage.WIDTH + HandPanel.SPACE_X);
+		} else {
+			id = (int) (p.getX() / handPanel.getOverlapWidth());
+		}
 		
-		return xmod;
+		return id;
 	}
 	
 	@Override
@@ -195,12 +186,13 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
+		System.out.println("HERE");
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("HEREq");
 	}
 }

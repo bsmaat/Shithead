@@ -64,6 +64,7 @@ public class Game {
 		
 
 		while(true) {
+			display("DECK SIZE: " + deck.size());
 			display("Pile: ");
 			pile.printCards();
 			
@@ -118,6 +119,8 @@ public class Game {
 				}
 			}
 			
+			display("DECK SIZE: " + deck.size());
+
 			//computer plays
 			if (COMPUTER_ON) { 
 				display("Computer player");
@@ -133,7 +136,7 @@ public class Game {
 							}
 							if (c != null) {
 								hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
-								Card pickUpCard = new Card(deck.removeCardFromTop());
+								//Card pickUpCard = new Card(deck.removeCardFromTop());
 								pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 								if (isMagicCard(c) == 10) {
 									display("Computer cleared the pile with " + c);
@@ -158,7 +161,8 @@ public class Game {
 					hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
 				}
 			}
-			
+			display("DECK SIZE: " + deck.size());
+
 			display("-------------------------------------------------------------------");
 			
 						
@@ -173,9 +177,16 @@ public class Game {
 			if (!deck.isEmpty()) {
 				Card pickUpCard = new Card(deck.removeCardFromTop());
 				h.addCard(pickUpCard);
-			} else
+			} else {
+				//Game over, Hand h has won!
+				gameOver(h);
 				break; // if deck is empty break out of loop
+			}
 		} 
+	}
+	
+	public void gameOver(Hand h) {
+		display("GAME OVER!");
 	}
 	
 	public boolean isCardPlayable(Card c) {
