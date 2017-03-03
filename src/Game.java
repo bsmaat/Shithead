@@ -89,38 +89,65 @@ public class Game {
 			for (int i = 0; i < NUM_OF_PLAYERS; i++) {
 				
 				// if the hand is playable, allow player to select next card
-				if (isHandPlayable(hands.get(i).getFaceUp())) {
+				// first check if its a hand with faceUp cards that we can play
+				int isShitHandPlayable = isShitHandPlayable(hands.get(i));
+				if (isShitHandPlayable == 1) {
 					boolean playing = true;
 					while (playing) {
 						gui.displayCards(hands,  pile);
 						System.out.print("Player " + i + ", drop a card: ");
+						//get which card is being clicked on
 						id = gui.getGUIInput();
-						display(id);
+						gui.displayCards(hands,  pile);
+						wait(1000);
 						// need to wait for click instead here
 						//input = scanner.nextLine(); 
 						//id = Integer.parseInt(input);
-						Card cardToPlay = hands.get(i).getFaceUp().getCard(id);
-						if (isCardPlayable(cardToPlay)) {
-							hands.get(i).getFaceUp().dropCard(id); // drop card (adds to pile automatically)							
-							//if (isMagicCard(hands.get(i).getFaceUp().getCard(id)) == 10) { // if 10 clear pile
-							if (isMagicCard(cardToPlay) == 10) {
-								pile.clear();
-								continue;
-							}
+						
+						int output = tryToPlayCard(hands.get(i), id);
+						if (output == 0) 
+							playing = true;
+						else if (output == 1)
 							playing = false;
-							pickUpCard(hands.get(i).getFaceUp());
-						} else {
-							display(hands.get(i).getFaceUp().getCard(id) + " is not playable!");
+						else if (output == 2)
+							playing = true;					
+					}
+				} else if (isShitHandPlayable == 2) { // if we have only faceDown cards, should be able to just pick one of them
+					display("On to face down cards");
+					boolean playing = true;
+					while (playing) {
+						gui.displayCards(hands,  pile);
+						display("Player " + i + ", pick a face down card");
+						id = gui.getGUIInput();
+
+						//int output = 1;
+						int output = tryToPlayCard(hands.get(i), id);
+						if (output == 0) {
+							// card can't be played, will pick up card
+							playing = false;
+						} 
+						else if (output == 1) 
+							// card was played
+							playing = false;
+						else if (output == 2) {
+							//card was played, and it's still our go
+							playing = true;
 						}
 					}
-				} else {
+				}
+				else if (isShitHandPlayable == 0) {
 					display("Not playable, player " + i + " picks up");
 					hands.get(i).getFaceUp().pickUpPile();
+				} else {
+					display("Error: we shouldn't get here!");
 				}
 			}
 			
 			display("DECK SIZE: " + deck.size());
+			gui.displayCards(hands,  pile);
 
+			wait(2000);
+			
 			//computer plays
 			if (COMPUTER_ON) { 
 				display("Computer player");
@@ -130,26 +157,27 @@ public class Game {
 						Card c;
 						if (!pile.isEmpty()) {
 							if (isMagicCard(pile.peakCardFromTop()) == 7) {
-								c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
+								c = hands.get(COMPUTER_INDEX).getFaceUp().getLowestCard();
 							} else {
 								c = hands.get(COMPUTER_INDEX).getFaceUp().getSmallestCardGreaterThanOrEqualTo(pile.peakCardFromTop());
 							}
 							if (c != null) {
 								hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
 								//Card pickUpCard = new Card(deck.removeCardFromTop());
-								pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 								if (isMagicCard(c) == 10) {
 									display("Computer cleared the pile with " + c);
 									pile.clear();
 									continue;
 								}
+								pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
+
 							} else {
 								display("Computer does not have a higher card. Picking up...");
 								hands.get(COMPUTER_INDEX).getFaceUp().pickUpPile();
 							}
 						} else {
 							// if it's empty just drop the lowest card
-							c = hands.get(COMPUTER_INDEX).getFaceUp().getMinValueCard();
+							c = hands.get(COMPUTER_INDEX).getFaceUp().getLowestCard();
 							hands.get(COMPUTER_INDEX).getFaceUp().dropCard(c);
 							pickUpCard(hands.get(COMPUTER_INDEX).getFaceUp());
 						}
@@ -171,6 +199,38 @@ public class Game {
 		//scanner.close();
 		
 	}
+	
+	/*
+	 * returns 0 if we couldn't play the card
+	 * returns 1 if we successfully played a regular card and don't need to go again
+	 * returns 2 if we played a magic card and need another go (i.e card = 10);
+	 */
+	public int tryToPlayCard(ShitHand h, int id) {
+		Card cardToPlay = new Card();
+		
+		// if the faceUp cards are empty, then we probably clicked on a face down card
+		if (h.getFaceUp().isEmpty()) {
+			//pick up a facedown card and move it to the faceup cards
+			h.getFaceUp().addCard(h.getFaceDown().getCard(id));
+			h.getFaceDown().removeCardById(id);
+		} else
+			cardToPlay = h.getFaceUp().getCard(id);
+		
+		if (isCardPlayable(cardToPlay)) {
+			h.getFaceUp().dropCard(id); // drop card (adds to pile automatically)							
+			if (isMagicCard(cardToPlay) == 10) {
+				pile.clear();
+				return 2;
+			}
+			//playing = false;
+			pickUpCard(h.getFaceUp());
+			return 1; //successfully played card
+		} else {
+			display(h.getFaceUp().getCard(id) + " is not playable!");
+			return 0;
+		}
+	}
+	
 	
 	public void pickUpCard(Hand h) {
 		while (h.size() < NUM_OF_CARDS) {
@@ -212,6 +272,10 @@ public class Game {
 		}
 	}
 	
+	/* checks to see if faceup hand has any cards playable
+	 * if not, or if there are no faceup cards, then no card playable
+	 */
+	
 	public boolean isHandPlayable(Hand h) {
 		for (int i = 0; i < h.size(); i++) {
 			if (isCardPlayable(h.getCard(i))) {
@@ -221,7 +285,30 @@ public class Game {
 		return false;
 	}
 	
-	public int isMagicCard(Card c) {
+	/*
+	 * Return -1 if both faceUp and faceDown is empty (means player is out)
+	 * Return 0 if we have faceUp cards but can't play any of them
+	 * Return 1 if we have faceUp cards and they're playable
+	 * Return 2 if we have no faceUp cards, and only faceDown cards
+	 * Return -2 if we have any other cases (a problem...)
+	 */
+	public int isShitHandPlayable(ShitHand h) {
+		if (h.getFaceUp().isEmpty() && h.getFaceDown().isEmpty()) { // if both faceup and facedown empty, not playable.
+			return -1;
+		} else {
+			if (!h.getFaceUp().isEmpty())
+				if (isHandPlayable(h.getFaceUp())) 
+					return 1;
+				else
+					return 0;
+			else if (!h.getFaceDown().isEmpty())
+				return 2;
+		}
+		return -2;
+		
+	}
+	
+	public static int isMagicCard(Card c) {
 		if (c.getValue() == MagicCard.TWO.getValue()) {
 			return 2;
 		} else if (c.getValue() == MagicCard.SEVEN.getValue()) {
@@ -230,5 +317,13 @@ public class Game {
 			return 10;
 		} else
 			return 0;
+	}
+	
+	public void wait(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (Exception e) {
+			
+		}
 	}
 }

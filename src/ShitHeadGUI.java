@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 
 public class ShitHeadGUI extends JPanel implements MouseListener {
@@ -20,16 +21,13 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	public String[] s = new String[] {"Ace of Hearts", "2 of Diamonds", "3 of Clubs"};
 	
 	public static Color BGCOLOR = Color.GREEN;
-	public static int FRAME_WIDTH = 300;
-	public static int FRAME_HEIGHT = 300;
+	public static int FRAME_WIDTH = 500;
+	public static int FRAME_HEIGHT = 400;
 
-	//JPanel pile = new JPanel();
 	List<HandPanel> hands = new ArrayList<HandPanel>();
 	PilePanel pilePanel = new PilePanel();
 	JFrame frame = new JFrame("Shithead");
-	
-	//List<List<JButton> > lstBtnHand = new ArrayList<List<JButton> >();
-	//List<List<CardLabel> > lstBtnHand = new ArrayList<List<CardLabel> >();
+		
 	List<List<CardImage>> lstBtnHand = new ArrayList<List<CardImage>>();
 	
 
@@ -50,7 +48,6 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	}
 	
 	public void init() {
-		//this.setLayout(new GridLayout(3, 1));
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setPreferredSize(new Dimension(ShitHeadGUI.FRAME_WIDTH,ShitHeadGUI.FRAME_HEIGHT));
 		this.setBackground(BGCOLOR);
@@ -59,19 +56,23 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		
 		// loop through all players + computer and add a new HnadPanel to GUI
 		for (int i = 0; i < Game.NUM_OF_PLAYERS +1; i++) {
-			lstBtnHand.add(new ArrayList<CardImage>());
 			hands.add(new HandPanel());
 			hands.get(i).addMouseListener(this);
-			
-			//this.add(hands.get(i));
 		}
 		
+		JLabel lbComputer = new JLabel("Computer");
+		JLabel lbPlayer = new JLabel("Player");
+		lbComputer.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		lbPlayer.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+		this.add(lbComputer);
 		this.add(hands.get(1)); // add computer
 		this.add(pilePanel);
 		this.add(hands.get(0)); // add player
 		
-		
-		frame.setMinimumSize(this.getSize());
+		this.add(lbPlayer);
+		this.setBorder(new EmptyBorder(10,10,10,10));
+		//frame.setMinimumSize(this.getSize());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.add(this);
@@ -81,18 +82,14 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	public void addHand(int id, Hand h) {
 		hands.get(id).removeAll(); // empty the handpanel
 		hands.get(id).clearCards();
-		//List<JButton> btnCard = new ArrayList<JButton>();
-		List<CardImage> btnCard = new ArrayList<CardImage>();
+		//List<CardImage> lstCard = new ArrayList<CardImage>();
 		
 		for (int i = 0; i < h.size(); i++) {
-			CardImage btn = new CardImage(h.getCard(i));
-			//btn.addMouseListener(this);
-		
-			btnCard.add(btn);
-			
-			hands.get(id).addCardToHand(btnCard.get(i));
+			CardImage cardImage = new CardImage(h.getCard(i));
+			hands.get(id).addCardToHand(cardImage);
+			//lstCard.add(cardImage);			
+			//hands.get(id).addCardToHand(lstCard.get(i));
 		}	
-		lstBtnHand.add(btnCard);
 
 	}
 	
@@ -113,7 +110,8 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		pilePanel.clearCards();
 		pilePanel.removeAll();
 		if (pile.isEmpty()) {
-			pilePanel.add(new JLabel("Empty pile"));
+			//pilePanel.add(new JLabel("Empty pile"));
+			//pilePanel.setBackground(Color.RED);
 		} else {
 			//pilePanel.add(new CardLabel(pile.peakCardFromTop()));
 			addPile(pilePanel, pile);
@@ -137,30 +135,10 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		waitingForClick = true;
 		return btnID;
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		//waitingForClick = false;
-		
-		// loop through all HandPanels
-		for (int i = 0; i < hands.size(); i++) {
-			if (e.getSource() == hands.get(i)) {
-				System.out.println("Hand " + i + " clicked on");
-				int id = getCardClickedID(hands.get(i), e);
-				System.out.println(id);
-				btnID = id;
-				waitingForClick = false;
-
-			}
-		}
-		
-	}
 	
 
 	public int getCardClickedID(HandPanel handPanel, MouseEvent e) {
-		Point p = e.getPoint();
-		System.out.println(p.getX() + ", " + p.getY());
-		
+		Point p = e.getPoint();		
 		int id = -1;
 		if(!handPanel.isMaxSize()) {
 			id = (int) p.getX() / (CardImage.WIDTH + HandPanel.SPACE_X);
@@ -169,6 +147,25 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		}
 		
 		return id;
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		//waitingForClick = false;
+		
+		/*
+		// loop through all HandPanels
+		for (int i = 0; i < hands.size(); i++) {
+			if (e.getSource() == hands.get(i)) {
+				System.out.println("Hand " + i + " clicked on");
+				
+				int id = getCardClickedID(hands.get(i), e);
+				//System.out.println(id);
+				btnID = id;
+				waitingForClick = false;
+			}
+		}*/
+		
 	}
 	
 	@Override
@@ -184,15 +181,24 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("HERE");
-		
+		// loop through all HandPanels
+		for (int i = 0; i < hands.size(); i++) {
+			if (e.getSource() == hands.get(i)) {
+				System.out.println("Hand " + i + " clicked on");
+				
+				int id = getCardClickedID(hands.get(i), e);
+				btnID = id;
+				hands.get(i).selectCard(id);
+				
+				waitingForClick = false;
+			}
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println("HEREq");
 	}
 }

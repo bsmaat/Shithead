@@ -30,11 +30,25 @@ public class CardPng {
 				
 			}
 		}
+		
+		BufferedImage tmp = null;
+		try {
+			tmp = ImageIO.read(new File("src/cards/back.png"));
+		} catch (Exception e) {
+			Game.display("ERROR: " + e);
+		}
+		img.put("back",  tmp);
 	}
 	
 	public static BufferedImage getCardImg(Card c) {
 		BufferedImage img = null;
 		img = CardPng.img.get(c.toString());
+		return img;
+	}
+	
+	public static BufferedImage getCardImg(String str) {
+		BufferedImage img = null;
+		img = CardPng.img.get(str);
 		return img;
 	}
 	

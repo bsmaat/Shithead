@@ -15,6 +15,8 @@ public class CardImage {
 	public static int WIDTH = 62;
 	public static int HEIGHT = 90;
 	
+	boolean selected = false;
+	
 	BufferedImage img = null;
 	Image dimg = null;
 
@@ -42,10 +44,23 @@ public class CardImage {
 		
 		int scale_factor = 8;
 		dimg = img.getScaledInstance((int)img.getWidth()/scale_factor, (int)img.getHeight()/scale_factor, Image.SCALE_SMOOTH);
-		//Graphics g = img.createGraphics();
-		//g.dispose();
+				
+		return dimg;
+	}
+	
+	public Image setImage(String str) {
+		try {
+			//img = ImageIO.read(new File("src/cards/" + toName(c)));
+			img = CardPng.getCardImg(str);
+			
+		} catch(Exception e) {
+			System.out.println(e);
+		}
 		
 		
+		int scale_factor = 8;
+		dimg = img.getScaledInstance((int)img.getWidth()/scale_factor, (int)img.getHeight()/scale_factor, Image.SCALE_SMOOTH);
+				
 		return dimg;
 	}
 	

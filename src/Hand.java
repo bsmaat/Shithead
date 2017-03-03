@@ -49,6 +49,18 @@ public class Hand extends Cards {
 		this.addCards(pile.getCards());
 		pile.clear();
 	}
+	
+	public Card getLowestCard() {
+		Card lowCard = null;
+		for(Card c : cards) {
+			if (lowCard == null) {
+				lowCard = c;
+			} else if (lowCard.getValue() > c.getValue() && Game.isMagicCard(c) == 0) {
+				lowCard = c;
+			}
+		}
+		return lowCard;
+	}
 	/*
 	public boolean isCardPlayable(int id) {
 		if (pile.isEmpty()) {
