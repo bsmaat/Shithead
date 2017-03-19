@@ -1,3 +1,9 @@
+/*
+ * PilePanel always knows is tied to the model pile as it was the best way to do it.
+ * By calling repaint() pilePanel will always paint what's in the panel 
+ * 
+ */
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -17,25 +23,30 @@ public class PilePanel extends CardPanel {
 	public static int OVERLAP = CardImage.WIDTH/5;
 
 	boolean max_size = false;
-		
+	
+	Pile pile;
+	
+	// this isn't really called?
 	public PilePanel() {
 		super();
 		//this.setBorder(BorderFactory.createLineBorder(Color.black));
-
 	}
 	
-	// this isn't really called?
-	public PilePanel(Hand hand) {
+	public PilePanel(Cards hand) {
 		super(hand);
 		setBackground(Color.red);
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-
 	}
 	
 	
+	public PilePanel(Pile pile) {
+		super(pile);
+		this.pile = pile;
+	}
+
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(CardImage.WIDTH + (cardImage.size()-1) * PilePanel.OVERLAP, CardImage.HEIGHT + 2* HandPanel.SPACE_Y);
+		return new Dimension(CardImage.WIDTH + (pile.size()-1) * PilePanel.OVERLAP, CardImage.HEIGHT + 2* HandPanel.SPACE_Y);
 	}
 	
 	@Override
@@ -56,16 +67,13 @@ public class PilePanel extends CardPanel {
     //paint the cards
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		/*
-		g.setColor(Color.RED);
-		g.drawOval(0, 0, CardImage.HEIGHT, CardImage.HEIGHT);
-		*/
 		
-		for (int i = 0; i < cardImage.size(); i++) {	
-			Image img = cardImage.get(i).getImage();
-			g.drawImage(img,  i*PilePanel.OVERLAP , PilePanel.SPACE_Y, null);
-		} 
+		for (int i = 0; i < pile.size(); i++) {
+			CardImage cardImage = new CardImage();
+			cardImage.setImage(pile.getCard(i));
+			Image img = cardImage.getImage();
+			g.drawImage(img, i*PilePanel.OVERLAP,  PilePanel.SPACE_Y,  null);
+		}
 	
 	}
 	

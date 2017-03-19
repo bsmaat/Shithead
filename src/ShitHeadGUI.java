@@ -11,12 +11,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 
-public class ShitHeadGUI extends JPanel implements MouseListener {
+public class ShitHeadGUI extends JPanel implements MouseListener, java.util.Observer  {
 
 	public String[] s = new String[] {"Ace of Hearts", "2 of Diamonds", "3 of Clubs"};
 	
@@ -25,14 +26,14 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	public static int FRAME_HEIGHT = 400;
 
 	List<HandPanel> hands = new ArrayList<HandPanel>();
-	PilePanel pilePanel = new PilePanel();
+	PilePanel pilePanel;// = new PilePanel();
 	JFrame frame = new JFrame("Shithead");
 		
 	List<List<CardImage>> lstBtnHand = new ArrayList<List<CardImage>>();
 	
 
 	boolean waitingForClick = true;
-	int btnID = -1;
+	List<Integer> cardClickedID = new ArrayList<Integer>();
 	
 	Game controller;
 	
@@ -43,8 +44,18 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	
 	public ShitHeadGUI() {
 		CardPng.init();
-		init();
-
+	}
+	
+	//call this first, before init();
+	// call it from the controller before init();
+	public void addHandPanels(List<ShitHand> h, Pile p) {
+		// loop through all players + computer and add a new HnadPanel to GUI
+		for (int i = 0; i < Game.NUM_OF_PLAYERS +1; i++) {
+			hands.add(new HandPanel(h.get(i)));
+			hands.get(i).addMouseListener(this);
+		}
+		
+		pilePanel = new PilePanel(p);
 	}
 	
 	public void init() {
@@ -53,12 +64,8 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		this.setBackground(BGCOLOR);
 		pilePanel.setLayout(new FlowLayout());
 
-		
-		// loop through all players + computer and add a new HnadPanel to GUI
-		for (int i = 0; i < Game.NUM_OF_PLAYERS +1; i++) {
-			hands.add(new HandPanel());
-			hands.get(i).addMouseListener(this);
-		}
+		//addHandPanels();
+
 		
 		JLabel lbComputer = new JLabel("Computer");
 		JLabel lbPlayer = new JLabel("Player");
@@ -79,52 +86,10 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 		frame.pack();	
 	}
 	
-	public void addHand(int id, Hand h) {
-		hands.get(id).removeAll(); // empty the handpanel
-		hands.get(id).clearCards();
-		//List<CardImage> lstCard = new ArrayList<CardImage>();
-		
-		for (int i = 0; i < h.size(); i++) {
-			CardImage cardImage = new CardImage(h.getCard(i));
-			hands.get(id).addCardToHand(cardImage);
-			//lstCard.add(cardImage);			
-			//hands.get(id).addCardToHand(lstCard.get(i));
-		}	
-
-	}
-	
-	
-	public void addPile(PilePanel pilePanel, Pile pile) {
-		for (int i = 0; i < pile.size(); i++) {
-			CardImage cardImage = new CardImage(pile.getCard(i));
-			pilePanel.addCardToHand(cardImage);
-		}
-	}
-	
-	public void displayCards(List<ShitHand> lstHands, Pile pile) {	
-		for(int i = 0; i < lstHands.size(); i++) {
-			addHand(i, lstHands.get(i).getFaceUp());	
-		}
-		
-		
-		pilePanel.clearCards();
-		pilePanel.removeAll();
-		if (pile.isEmpty()) {
-			//pilePanel.add(new JLabel("Empty pile"));
-			//pilePanel.setBackground(Color.RED);
-		} else {
-			//pilePanel.add(new CardLabel(pile.peakCardFromTop()));
-			addPile(pilePanel, pile);
-		}
-	
-		//this.add(pilePanel);
-		this.repaint();
-		//need to pack to get consistency
-		frame.pack();
-	}
 
 	
-	public int getGUIInput() {
+	public List<Integer> getGUIInput() {
+		cardClickedID.clear();
 		while(waitingForClick) {
 			try {
 				Thread.sleep(200);
@@ -133,7 +98,7 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 			}
 		}
 		waitingForClick = true;
-		return btnID;
+		return cardClickedID;
 	}
 	
 
@@ -182,17 +147,37 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		// loop through all HandPanels
+
 		for (int i = 0; i < hands.size(); i++) {
 			if (e.getSource() == hands.get(i)) {
-				System.out.println("Hand " + i + " clicked on");
-				
 				int id = getCardClickedID(hands.get(i), e);
-				btnID = id;
-				hands.get(i).selectCard(id);
+
+				if (SwingUtilities.isRightMouseButton(e))
+				{
+					Game.debug("right mouse clicked");
+					if (!hands.get(i).hand.cards.get(id).getSelected()) {
+						hands.get(i).hand.cards.get(id).selected(true);
+						cardClickedID.add(id);
+					} else if (hands.get(i).hand.cards.get(id).getSelected()) {
+						hands.get(i).hand.cards.get(id).selected(false);
+						cardClickedID.remove(Integer.valueOf(id));
+					}
+
+					refreshGUI();
+				} 
+				else if (SwingUtilities.isLeftMouseButton(e))
+				{
+					Game.debug("Left mouse clicked");
+					if (hands.get(i).hand.size() != 0) {
+						if (!hands.get(i).hand.cards.get(id).getSelected())
+							cardClickedID.add(id);
+					} else {
+						cardClickedID.add(id);
+					}
+					//hands.get(i).selectCard(id);
 				
-				waitingForClick = false;
+					waitingForClick = false;
+				}
 			}
 		}
 	}
@@ -201,4 +186,28 @@ public class ShitHeadGUI extends JPanel implements MouseListener {
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		Game.debug("update(Obserable, Object)");
+		ShitModel model = (ShitModel)arg;
+
+		refreshGUI();
+
+		
+	}
+	
+	public void refreshGUI() {
+		for (int i = 0; i < hands.size(); i++) {
+			//hands.get(i).hand = model.hands.get(i).getFaceUp();
+			hands.get(i).repaint();
+			hands.get(i).revalidate();
+		}
+		
+		//pilePanel.pile = model.pile;
+		pilePanel.repaint();
+		pilePanel.revalidate();		
+	}
+	
+
 }

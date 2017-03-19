@@ -17,11 +17,15 @@ public class CardImage {
 	
 	boolean selected = false;
 	
-	BufferedImage img = null;
+	BufferedImage bimg = null;
 	Image dimg = null;
 
 	public CardImage() {
 		
+	}
+	
+	public CardImage(String str) {
+		setImage(str);
 	}
 	public CardImage(Card c) {
 		setImage(c);
@@ -35,32 +39,34 @@ public class CardImage {
 	public Image setImage(Card c) {
 		try {
 			//img = ImageIO.read(new File("src/cards/" + toName(c)));
-			img = CardPng.getCardImg(c);
+			//img = CardPng.getCardImg(c);
+			dimg = CardPng.getCardImg(c);
+
 			
 		} catch(Exception e) {
 			System.out.println(e);
 		}
 		
-		
+		/*
 		int scale_factor = 8;
 		dimg = img.getScaledInstance((int)img.getWidth()/scale_factor, (int)img.getHeight()/scale_factor, Image.SCALE_SMOOTH);
-				
+			*/	
 		return dimg;
 	}
 	
 	public Image setImage(String str) {
 		try {
 			//img = ImageIO.read(new File("src/cards/" + toName(c)));
-			img = CardPng.getCardImg(str);
+			dimg = CardPng.getCardImg(str);
 			
 		} catch(Exception e) {
 			System.out.println(e);
 		}
 		
-		
+		/*
 		int scale_factor = 8;
-		dimg = img.getScaledInstance((int)img.getWidth()/scale_factor, (int)img.getHeight()/scale_factor, Image.SCALE_SMOOTH);
-				
+		dimg = bimg.getScaledInstance((int)bimg.getWidth()/scale_factor, (int)bimg.getHeight()/scale_factor, Image.SCALE_SMOOTH);
+		*/		
 		return dimg;
 	}
 	

@@ -16,6 +16,12 @@ public class Card {
 	 */
 	int value;
 	
+	/*
+	 * 
+	 * 
+	 */
+	boolean selected = false;
+	
 	//public static final int ACE = 1;
 	public static final int TWO = 2;
 	public static final int THREE = 3;
@@ -47,6 +53,7 @@ public class Card {
 	 */
 	public static final int CLUBS = 4;
 
+	
 	/**
 	 * Default constructor
 	 */
@@ -231,6 +238,14 @@ public class Card {
 			return false;
 	}
 	
+	public boolean getSelected() 
+	{
+		return selected;
+	}
+	
+	public void selected(boolean selected) {
+		this.selected = selected;
+	}
 
 
 }

@@ -3,8 +3,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -21,26 +23,31 @@ public class HandPanel extends CardPanel {
 	
 	double overlap_width = -1;
 	
+	Hand hand; 
+	ShitHand shitHand;
 	//List<CardImage> cardImage;
-	CardImage backCard = new CardImage();
-	
+	CardImage backCard = new CardImage("back");
+
+	/*
 	public HandPanel() {
 		super();
-		backCard.setImage("back");
+		
 		//this.setBorder(BorderFactory.createLineBorder(Color.black));
 
-	}
+	}*/
 	
 	//this isn't really used?
-	public HandPanel(Hand hand) {
-		super(hand);
+	public HandPanel(ShitHand shitHand) {
+		//super(hand.getFaceUp());
+		this.shitHand = shitHand;
+		this.hand = shitHand.getFaceUp();
 
 	}
 	
 	@Override
 	public Dimension getPreferredSize() {
-		if (cardImage.size() >= Game.NUM_OF_CARDS) 
-			return new Dimension(cardImage.size() * (CardImage.WIDTH + HandPanel.SPACE_X) - HandPanel.SPACE_X, CardImage.HEIGHT + 2 * HandPanel.SPACE_Y);
+		if (hand.size() >= Game.NUM_OF_CARDS) 
+			return new Dimension(hand.size() * (CardImage.WIDTH + HandPanel.SPACE_X) - HandPanel.SPACE_X, CardImage.HEIGHT + 2 * HandPanel.SPACE_Y);
 		else
 			return new Dimension(CardImage.WIDTH*3 + 2 * HandPanel.SPACE_X, CardImage.HEIGHT + 2 * HandPanel.SPACE_Y);
 	}
@@ -64,6 +71,7 @@ public class HandPanel extends CardPanel {
 		//return new Dimension(CardImage.WIDTH*3 + 2 * HandPanel.SPACE_X, CardImage.HEIGHT + 2 * HandPanel.SPACE_Y);
 		return new Dimension((int)this.getParent().getSize().getWidth(), (int)this.getPreferredSize().getHeight()); 
 	}
+	
 	/*
     @Override
     public Dimension getPreferredSize() {
@@ -81,7 +89,7 @@ public class HandPanel extends CardPanel {
 	}
     
 	public void selectCard(int id) {
-		cardImage.get(id).selected = true;
+		//cardImage.get(id).selected = true;
 	}
 	
     //paint the cards
@@ -92,8 +100,8 @@ public class HandPanel extends CardPanel {
 		double centre = this.getSize().getWidth()/2;
 
 		//draw the face down cards (3 of them)
-		for (int i = 0; i < Game.NUM_OF_CARDS; i++) {
-			//System.out.println(centre);
+		//for (int i = 0; i < Game.NUM_OF_CARDS; i++) {
+		for (int i = 0; i < shitHand.getFaceDown().size(); i++) {
 			double posx = (-1.5 + i) * CardImage.WIDTH + (i-1) * HandPanel.SPACE_X + centre;
 			g.drawImage(backCard.getImage(), (int)posx, 0, null);
 		}
@@ -113,10 +121,11 @@ public class HandPanel extends CardPanel {
 		*/
 		
 		if (!max_size) {
-			for (int i = 0; i < cardImage.size(); i++) {	
-				Image img = cardImage.get(i).getImage();
-				if (cardImage.get(i).selected) {
-					Game.display("HERE");
+			for (int i = 0; i < hand.size(); i++) {	
+				CardImage cardImage = new CardImage();
+				cardImage.setImage(hand.getCard(i));
+				Image img = cardImage.getImage();
+				if (hand.getCard(i).selected) {
 					g.drawImage(img,  i*(CardImage.WIDTH) + i * HandPanel.SPACE_X , 0, null);
 				}
 				else
@@ -125,14 +134,18 @@ public class HandPanel extends CardPanel {
 			}
 		} else {
 			// here we have overlapping
-			overlap_width = (this.getSize().getWidth())/cardImage.size();
+			overlap_width = (this.getSize().getWidth())/hand.size();
 			//double gap_width = (this.getParent().getSize().getWidth()-cardImage.size()*CardImage.WIDTH)/(cardImage.size()-1);
 			
-			for (int i = 0; i < cardImage.size(); i++) {
-				Image img = cardImage.get(i).getImage();
-				if (cardImage.get(i).selected) {
+			
+			for (int i = 0; i < hand.size(); i++) {
+				//Image img = cardImage.get(i).getImage();
+				CardImage cardImage = new CardImage();
+				cardImage.setImage(hand.getCard(i));
+				Image img = cardImage.getImage();
+				if (hand.getCard(i).getSelected()) 
 					g.drawImage(img,  (int)(i*overlap_width),  0,  null);
-				} else 
+				else 
 					g.drawImage(img,  (int)(i*overlap_width),  HandPanel.SPACE_Y,  null);
 				
 			}

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,18 +11,13 @@ import javax.swing.border.EmptyBorder;
 
 public class CardPanel extends JPanel {
 	
-	List<CardImage> cardImage;
 	
 	public CardPanel() {
-		cardImage = new ArrayList<CardImage>();
 		this.setBackground(ShitHeadGUI.BGCOLOR);
 	}
 	
-	public CardPanel(Hand hand) {
-		cardImage = new ArrayList<CardImage>();
-		for (int i = 0; i < hand.size(); i++) {
-			cardImage.add(new CardImage(hand.getCard(i)));
-		}
+	public CardPanel(Cards hand) {
+		this.setBackground(Color.BLACK);
 	}
 	
 	/*
@@ -46,13 +42,7 @@ public class CardPanel extends JPanel {
 	}
     */
 	
-    public void clearCards() {
-    	cardImage.clear();
-    }
     
-    public void addCardToHand(CardImage c) {
-    	cardImage.add(c);
-    }
     
 	
 	
