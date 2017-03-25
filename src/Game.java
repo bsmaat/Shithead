@@ -1,6 +1,8 @@
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+
 public class Game {
 
 	
@@ -9,6 +11,7 @@ public class Game {
 	static int COMPUTER_INDEX = 0;
 	static final boolean COMPUTER_ON = true;
 	
+	static final boolean DEBUG = true;
 	ShitHeadGUI gui;
 	
 	public static void main(String[] args) {
@@ -17,7 +20,7 @@ public class Game {
 		game.startGame();
 	}
 	
-	
+	JFrame frame = new JFrame("Shithead");
 	ShitModel shitModel;
 	GameController gameController;
 	
@@ -25,6 +28,12 @@ public class Game {
 		gui = new ShitHeadGUI();
 		shitModel = new ShitModel();
 		gameController = new GameController(gui, shitModel);
+		/*
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		frame.add(gui);
+		frame.pack();
+		*/
 	}
 	
 	public void startGame() {
@@ -43,7 +52,8 @@ public class Game {
 	}
 	
 	public static void debug(String s) {
-		System.out.println("DEBUG: " + s);
+		if (DEBUG) 
+			System.out.println("DEBUG: " + s);
 	}
 	
 	// some game rules

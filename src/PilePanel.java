@@ -32,15 +32,7 @@ public class PilePanel extends CardPanel {
 		//this.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 	
-	public PilePanel(Cards hand) {
-		super(hand);
-		setBackground(Color.red);
-		this.setBorder(BorderFactory.createLineBorder(Color.black));
-	}
-	
-	
 	public PilePanel(Pile pile) {
-		super(pile);
 		this.pile = pile;
 	}
 

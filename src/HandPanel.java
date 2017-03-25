@@ -38,10 +38,8 @@ public class HandPanel extends CardPanel {
 	
 	//this isn't really used?
 	public HandPanel(ShitHand shitHand) {
-		//super(hand.getFaceUp());
 		this.shitHand = shitHand;
 		this.hand = shitHand.getFaceUp();
-
 	}
 	
 	@Override

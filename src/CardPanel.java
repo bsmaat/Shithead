@@ -17,7 +17,7 @@ public class CardPanel extends JPanel {
 	}
 	
 	public CardPanel(Cards hand) {
-		this.setBackground(Color.BLACK);
+		this.setBackground(ShitHeadGUI.BGCOLOR);
 	}
 	
 	/*

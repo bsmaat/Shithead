@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class GameController {
 
 	ShitHeadGUI gui;
+	TablePanel tablePanel;
 	ShitModel shitModel;
 	
 	Deck deck;
@@ -13,14 +14,13 @@ public class GameController {
 	
 	public GameController(ShitHeadGUI view, ShitModel model) {
 		this.gui = view;
+		this.tablePanel = view.tablePanel; 
 		this.shitModel = model;
 		
-		this.shitModel.addObserver(gui);
+		this.shitModel.addObserver(tablePanel);
 		this.deck = shitModel.deck;
 		this.hands = shitModel.hands;
 		this.pile = shitModel.pile;
-	
-		//shitModel.updateView();
 	}
 
 
@@ -44,8 +44,8 @@ public class GameController {
 			shitModel.hands.add(hands.get(i));
 		}
 
-		gui.addHandPanels(hands, pile);
-		gui.init();
+		tablePanel.addHandPanels(hands, pile);
+		tablePanel.init();
 		//begin pile
 		//Card c = new Card(deck.peakCardFromTop());
 		pile.addCard(new Card(deck.removeCardFromTop()));
@@ -54,7 +54,7 @@ public class GameController {
 		shitModel.updateChanges();
 
 		while(true) {
-			Game.display("Deck SIZE: " + deck.size());
+			//gui.display("Deck size: " + deck.size());
 			Game.display("Pile: ");
 			pile.printCards();
 			
@@ -87,20 +87,27 @@ public class GameController {
 						System.out.print("Player " + i + ", drop a card: ");
 						
 						//get which card is being clicked on
-						id = gui.getGUIInput();
+						id = tablePanel.getGUIInput();
 						
 						
-						//for (int j = 0; j < id.size(); j++) {
-							//Game.debug("Playing card " + j);
 						Game.debug("Call tryToPlayCard()");
+						Card c = hands.get(i).getFaceUp().getCard(id.get(0));
 						int output = tryToPlayCard(hands.get(i), id);
 						if (output == 0) 
+						{
+							gui.display("Player " + i + " can't play " + c + ". Choose another card.");
 							playing = true;
+						}
 						else if (output == 1)
+						{
+							gui.display("Player " + i + " played " + c);
 							playing = false;
+						}
 						else if (output == 2)
-							playing = true;	
-						//}
+						{
+							gui.display("Player " + i + " played " + c + ". Player " + i + " play again" );
+							playing = true;
+						}
 						shitModel.updateChanges();
 
 					}
@@ -112,27 +119,31 @@ public class GameController {
 						shitModel.updateChanges();
 
 						Game.display("Player " + i + ", pick a face down card");
-						id = gui.getGUIInput();
+						id = tablePanel.getGUIInput();
 						Card c = hands.get(i).getFaceDown().getCard(id.get(0));
 						hands.get(i).getFaceUp().addCard(c);
 						hands.get(i).getFaceDown().removeCard(c);
-						//int output = 1;
+
 						int output = tryToPlayCard(hands.get(i), id);
 						if (output == 0) {
 							// card can't be played, will pick up card
+							gui.display("Player " + i + " can't play " + c + ". Choose another card.");
 							playing = false;
 						} 
-						else if (output == 1) 
+						else if (output == 1) {
 							// card was played
+							gui.display("Player " + i + " played " + c);
 							playing = false;
+						}
 						else if (output == 2) {
 							//card was played, and it's still our go
+							gui.display("Player " + i + " played " + c + ". Player " + i + " play again" );
 							playing = true;
 						}
 					}
 				}
 				else if (isShitHandPlayable == 0) {
-					Game.display("Not playable, player " + i + " picks up");
+					gui.display("Not playable, player " + i + " picks up");
 					hands.get(i).getFaceUp().pickUpPile();
 				} else {
 					Game.display("Error: we shouldn't get here!");
@@ -181,14 +192,14 @@ public class GameController {
 						hands.get(Game.COMPUTER_INDEX).getFaceUp().dropCard(c);
 						//Card pickUpCard = new Card(deck.removeCardFromTop());
 						if (Game.isMagicCard(c) == 10) {
-							Game.display("Computer cleared the pile with " + c);
+							gui.display("Computer cleared the pile with " + c);
 							pile.clear();
 							continue;
 						}
 						pickUpCard(hands.get(Game.COMPUTER_INDEX).getFaceUp());
 
 					} else {
-						Game.display("Computer does not have a higher card. Picking up...");
+						gui.display("Computer does not have a higher card. Picking up...");
 						hands.get(Game.COMPUTER_INDEX).getFaceUp().pickUpPile();
 					}
 				} else {
@@ -197,11 +208,11 @@ public class GameController {
 					hands.get(Game.COMPUTER_INDEX).getFaceUp().dropCard(c);
 					pickUpCard(hands.get(Game.COMPUTER_INDEX).getFaceUp());
 				}
-				Game.display("Computer played " + c);
+				gui.display("Computer played " + c);
 				playing = false;
 			}
 		} else {
-			Game.display("Computer can't playing, picking up");
+			gui.display("Computer can't playing, picking up");
 			hands.get(Game.COMPUTER_INDEX).getFaceUp().pickUpPile();
 		}
 	}
@@ -257,6 +268,7 @@ public class GameController {
 				cardToPlay = h.getFaceUp().getCard(id.get(i));
 		
 			if (isCardPlayable(cardToPlay)) {
+				//gui.display("Played " + cardToPlay);
 				for (int i = id.size()-1; i >= 0; i--) 
 					h.getFaceUp().dropCard(id.get(i)); // drop card (adds to pile automatically)							
 				if (Game.isMagicCard(cardToPlay) == 10) {
@@ -267,7 +279,7 @@ public class GameController {
 				pickUpCard(h.getFaceUp());
 				return 1; //successfully played card
 			} else {
-				Game.display(h.getFaceUp().getCard(id.get(0)) + " is not playable!");
+				gui.display(h.getFaceUp().getCard(id.get(0)) + " is not playable!");
 				return 0;
 			}
 		}
