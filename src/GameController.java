@@ -1,9 +1,20 @@
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.SocketException;
 
 public class GameController {
 
+	
+	// Socket stuff
+	Socket socket = null;
+	ObjectInputStream inputStream = null;
+	ObjectOutputStream outputStream = null;
+	
 	ShitHeadGUI gui;
 	TablePanel tablePanel;
 	ShitModel shitModel;
@@ -23,6 +34,16 @@ public class GameController {
 		this.pile = shitModel.pile;
 	}
 
+	public void communicate() {
+		try { 
+			socket = new Socket("localhost", 7777);
+			System.out.println("Connected!");
+			outputStream = new ObjectOutputStream(socket.getOutputStream());
+			outputStream.writeObject(this.shitModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void startGame() {
 		@SuppressWarnings("resource")

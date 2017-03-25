@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShitModel extends java.util.Observable {
+public class ShitModel extends java.util.Observable implements Serializable {
 
 	Deck deck = new Deck();
 	Pile pile = new Pile();
