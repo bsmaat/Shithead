@@ -1,6 +1,13 @@
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,13 +16,9 @@ import java.net.SocketException;
 
 public class GameController {
 
+
 	
-	// Socket stuff
-	Socket socket = null;
-	ObjectInputStream inputStream = null;
-	ObjectOutputStream outputStream = null;
-	
-	ShitHeadGUI gui;
+	TablePanel gui;
 	TablePanel tablePanel;
 	ShitModel shitModel;
 	
@@ -23,27 +26,19 @@ public class GameController {
 	Pile pile;
 	List<ShitHand> hands;
 	
-	public GameController(ShitHeadGUI view, ShitModel model) {
-		this.gui = view;
-		this.tablePanel = view.tablePanel; 
+	public GameController(TablePanel tablePanel, ShitModel model) {
+		this.tablePanel = tablePanel;
+		this.gui = tablePanel; // quick fix
 		this.shitModel = model;
 		
-		this.shitModel.addObserver(tablePanel);
-		this.deck = shitModel.deck;
+		this.deck = shitModel.getDeck();
 		this.hands = shitModel.hands;
-		this.pile = shitModel.pile;
+		this.pile = shitModel.getPile();
+		
+
 	}
 
-	public void communicate() {
-		try { 
-			socket = new Socket("localhost", 7777);
-			System.out.println("Connected!");
-			outputStream = new ObjectOutputStream(socket.getOutputStream());
-			outputStream.writeObject(this.shitModel);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 
 	public void startGame() {
 		@SuppressWarnings("resource")
@@ -72,8 +67,8 @@ public class GameController {
 		pile.addCard(new Card(deck.removeCardFromTop()));
 		
 		// cards have been dealt so update changes
-		shitModel.updateChanges();
-
+		//shitModel.updateChanges();
+		tablePanel.refreshGUI();
 		while(true) {
 			//gui.display("Deck size: " + deck.size());
 			Game.display("Pile: ");
@@ -129,7 +124,24 @@ public class GameController {
 							gui.display("Player " + i + " played " + c + ". Player " + i + " play again" );
 							playing = true;
 						}
-						shitModel.updateChanges();
+						
+
+						tablePanel.refreshGUI();
+						ObjectMapper mapper = new ObjectMapper();
+						mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+						String jsonStr = "";
+						try {
+							jsonStr = mapper.writeValueAsString(shitModel);
+							
+							//mapper.writeValue(new File("file.json"), shitModel);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						Client client = new Client();
+						client.send(jsonStr);
+					
 
 					}
 				} else if (isShitHandPlayable == 2) { // if we have only faceDown cards, should be able to just pick one of them
@@ -137,8 +149,8 @@ public class GameController {
 					boolean playing = true;
 					while (playing) {
 						//gui.displayCards(hands,  pile);
-						shitModel.updateChanges();
-
+						//shitModel.updateChanges();
+						tablePanel.refreshGUI();
 						Game.display("Player " + i + ", pick a face down card");
 						id = tablePanel.getGUIInput();
 						Card c = hands.get(i).getFaceDown().getCard(id.get(0));
@@ -174,8 +186,9 @@ public class GameController {
 			Game.display("DECK SIZE: " + deck.size());
 			
 			// player has played or picked up, so update changes
-			shitModel.updateChanges();
-
+			//shitModel.updateChanges();
+			tablePanel.refreshGUI();
+			
 			wait(1000);
 			
 			//computer plays
@@ -185,7 +198,8 @@ public class GameController {
 			}
 			Game.display("DECK SIZE: " + deck.size());
 			// computer has done playing so update view
-			shitModel.updateChanges();
+			//shitModel.updateChanges();
+			tablePanel.refreshGUI();
 			Game.display("-------------------------------------------------------------------");
 			
 						

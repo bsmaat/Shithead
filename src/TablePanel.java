@@ -66,9 +66,11 @@ public class TablePanel extends JPanel implements MouseListener, java.util.Obser
 		    e.printStackTrace();
 		}
 		
-		
+
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.setPreferredSize(new Dimension(ShitHeadGUI.TABLE_WIDTH,ShitHeadGUI.TABLE_HEIGHT));
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
+
+		//this.setPreferredSize(new Dimension(ShitHeadGUI.TABLE_WIDTH,ShitHeadGUI.TABLE_HEIGHT));
 		this.setBackground(ShitHeadGUI.BGCOLOR);
 		pilePanel.setLayout(new FlowLayout());
 
@@ -88,7 +90,7 @@ public class TablePanel extends JPanel implements MouseListener, java.util.Obser
 		
 		this.add(lbPlayer);
 				
-		this.setBorder(new EmptyBorder(10,10,10,10));
+		//this.setBorder(new EmptyBorder(10,10,10,10));
 
 	}
 	
@@ -201,6 +203,11 @@ public class TablePanel extends JPanel implements MouseListener, java.util.Obser
 		
 		pilePanel.repaint();
 		pilePanel.revalidate();		
+	}
+	
+	// temp method?
+	public void display(String s) {
+		System.out.println(s);
 	}
 	
 

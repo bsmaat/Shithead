@@ -9,18 +9,18 @@ public class Card {
 	/** 
 	 * Rank of card (0..3)
 	 */
-	int rank;
+	private int rank;
 	
 	/**
 	 * Value of card (1..13)
 	 */
-	int value;
+	private int value;
 	
 	/*
 	 * 
 	 * 
 	 */
-	boolean selected = false;
+	private boolean selected = false;
 	
 	//public static final int ACE = 1;
 	public static final int TWO = 2;

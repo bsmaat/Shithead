@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -7,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 public class MessagePanel extends JPanel {
 
@@ -16,10 +18,17 @@ public class MessagePanel extends JPanel {
 	
 	static int PANE_WIDTH = 300;
 	
+	
+	
 	public MessagePanel() {
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		this.setLayout(new BorderLayout());
 		//this.setMinimumSize(new Dimension(200, (int)this.);
 		this.setBackground(Color.CYAN);
+		
+		
 		model = new DefaultListModel();
 		lstMessages = new JList(model);
 		lstMessages.setLayoutOrientation(JList.VERTICAL);
@@ -32,7 +41,7 @@ public class MessagePanel extends JPanel {
         pane.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
 
 		this.add(new JLabel("Messages:"));
-		this.add(pane);
+		this.add(pane, BorderLayout.CENTER);
 	}
 	
 	public void addItemToList(String s) {

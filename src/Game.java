@@ -12,32 +12,23 @@ public class Game {
 	static final boolean COMPUTER_ON = true;
 	
 	static final boolean DEBUG = true;
-	ShitHeadGUI gui;
 	
 	public static void main(String[] args) {
 		
-		Game game = new Game();
-		game.startGame();
+		//Game game = new Game();
+		//game.startGame();
+		MainController mainController = new MainController();
+
 	}
 	
-	JFrame frame = new JFrame("Shithead");
-	ShitModel shitModel;
-	GameController gameController;
+	//JFrame frame = new JFrame("Shithead");
+
 	
 	public Game() {
-		gui = new ShitHeadGUI();
-		shitModel = new ShitModel();
-		gameController = new GameController(gui, shitModel);
-		/*
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		frame.add(gui);
-		frame.pack();
-		*/
 	}
 	
 	public void startGame() {
-		gameController.startGame();
+		//gameController.startGame();
 	}
 	public static void display(String s) {
 		System.out.println(s);;

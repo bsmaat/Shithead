@@ -1,3 +1,4 @@
+import java.io.Serializable;
 
 /*
  * ShitHand is the hand in Shithead: three face down cards and face up cards
@@ -10,10 +11,15 @@ public class ShitHand {// extends Hand {
 	class Size {
 		public int upSize;
 		public int downSize;
+		
+		public Size() {};
+		
 		public Size(int x, int y) {
 			upSize = x;
 			downSize = y;
 		}
+		
+		
 		public String toString() {
 			return (upSize + " up, " + downSize + " down");
 		}

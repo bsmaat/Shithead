@@ -28,7 +28,7 @@ public class ShitHeadGUI extends JPanel {//implements java.util.Observer {
 	public static int FRAME_WIDTH = 1000;
 	public static int FRAME_HEIGHT = 600;
 	
-	public static int TABLE_WIDTH = 600;
+	public static int TABLE_WIDTH = 800;
 	public static int TABLE_HEIGHT = 600;
 	
 	JFrame frame = new JFrame("Shithead");
@@ -37,31 +37,56 @@ public class ShitHeadGUI extends JPanel {//implements java.util.Observer {
 	TablePanel tablePanel;
 	DisplayPanel displayPanel;
 	MessagePanel messagePanel;
+	ServerPanel serverPanel;
+	ClientPanel clientPanel;
+	SidebarPanel sidebarPanel;
+	MainPanel mainPanel;
 	
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem menuItem;
 	
+	ShitModel shitModel;
+	
 	
 	public ShitHeadGUI() {
 		init();
 	}
+	
+	public ShitHeadGUI(ShitModel shitModel) {
+		this.shitModel = shitModel;
+		init();
+		
+	}
 
+	
 	public void display(String s) {
 		Game.display(s);
-		displayPanel.setText(s);
-		messagePanel.addItemToList(s);
+		//displayPanel.setText(s);
+		//messagePanel.addItemToList(s);
 	}
 	
 	public void init() {
+		
+		try { 
+		    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+		
 		this.setLayout(new BorderLayout());
 		tablePanel = new TablePanel();
 		displayPanel = new DisplayPanel();
 		messagePanel = new MessagePanel();
+		serverPanel = new ServerPanel();
+		clientPanel = new ClientPanel();
+		
+		sidebarPanel = new SidebarPanel(clientPanel, serverPanel, messagePanel);
+		mainPanel = new MainPanel(tablePanel);
 		this.setPreferredSize(new Dimension(ShitHeadGUI.FRAME_WIDTH,ShitHeadGUI.FRAME_HEIGHT));
-		this.add(tablePanel, BorderLayout.CENTER);
+		this.add(mainPanel, BorderLayout.CENTER);
 		this.add(displayPanel, BorderLayout.PAGE_END);
-		this.add(messagePanel, BorderLayout.EAST);
+		this.add(sidebarPanel, BorderLayout.EAST);
 		
 		menuBar = new JMenuBar();
 		menu = new JMenu("File");

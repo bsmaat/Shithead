@@ -6,7 +6,9 @@ import java.util.List;
 
 public class Cards {
 
-	List<Card> cards;
+	public List<Card> cards;
+	
+	//private Card maxValueCard = new Card();
 	
 	public Cards() {
 		cards = new ArrayList<Card>();
@@ -40,7 +42,7 @@ public class Cards {
 		return cards;
 	}
 	
-	public Card getMaxValueCard() {
+	public Card findMaxValueCard() {
 		Card maxCard = null;
 		for(Card c : cards) {
 			if (maxCard == null) {
@@ -52,7 +54,7 @@ public class Cards {
 		return maxCard;
 	}
 	
-	public Card getMinValueCard() {
+	public Card findMinValueCard() {
 		Card minCard = null;
 		for (Card c : cards) {
 			if (minCard == null) {
@@ -178,7 +180,7 @@ public class Cards {
 			return null;
 	}
 	
-	public Card getSmallestCardGreaterThanOrEqualTo(Card c) {
+	public Card findSmallestCardGreaterThanOrEqualTo(Card c) {
 		if (!isEmpty()) {
 			this.sortByValue(true);
 			for (int i = 0; i < cards.size(); i++) {
@@ -190,7 +192,7 @@ public class Cards {
 		return null;
 	}
 	
-	public Card getSmallestCardLessThanOrEqualTo(Card c) {
+	public Card findSmallestCardLessThanOrEqualTo(Card c) {
 		if (!isEmpty()) {
 			this.sortByValue(true);
 			for (int i = 0; i < cards.size(); i++) {

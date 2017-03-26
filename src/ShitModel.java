@@ -1,11 +1,11 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShitModel extends java.util.Observable implements Serializable {
 
-	Deck deck = new Deck();
-	Pile pile = new Pile();
+public class ShitModel {
+
+	private Deck deck = new Deck();
+	private Pile pile = new Pile();
 	
 	List<ShitHand> hands;// = new ArrayList<ShitHand>();
 
@@ -13,10 +13,14 @@ public class ShitModel extends java.util.Observable implements Serializable {
 		hands = new ArrayList<ShitHand>();
 	}
 	
-	public void updateChanges() {
-		Game.debug("updateChanges()");
-		setChanged();
-		notifyObservers(this);
+	public Deck getDeck() {
+		return deck;
 	}
+	
+	public Pile getPile() {
+		return pile;
+	}
+	
+	
 	
 }

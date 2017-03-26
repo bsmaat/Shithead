@@ -36,8 +36,10 @@ public class HandPanel extends CardPanel {
 
 	}*/
 	
-	//this isn't really used?
 	public HandPanel(ShitHand shitHand) {
+		// for debugging purposes, stick a border around handpanel
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
+
 		this.shitHand = shitHand;
 		this.hand = shitHand.getFaceUp();
 	}
@@ -123,7 +125,7 @@ public class HandPanel extends CardPanel {
 				CardImage cardImage = new CardImage();
 				cardImage.setImage(hand.getCard(i));
 				Image img = cardImage.getImage();
-				if (hand.getCard(i).selected) {
+				if (hand.getCard(i).getSelected()) {
 					g.drawImage(img,  i*(CardImage.WIDTH) + i * HandPanel.SPACE_X , 0, null);
 				}
 				else
